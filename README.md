@@ -4,7 +4,13 @@ This HelloID Service Automation Delegated Form provides SharePoint Online functi
  1. Search site based on sitename
  2. Select a site from search results
  3. View the details 
- 
+
+## Versioning
+| Version | Description | Date |
+| - | - | - |
+| 1.0.1   | Added version number and updated all-in-one script | 2021/12/13  |
+| 1.0.0   | Initial release | 2020/12/05  |
+
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 * [Description](#description)
@@ -47,5 +53,8 @@ This Powershell data source performs a search on available SharePoint sites.
 ### Powershell data source '[powershell-datasource]_Sharepoint-get-site-details'
 This Powershell data source gets the details of the selected SharePoint site.
 
-# HelloID Docs
+## Getting help
+_If you need help, feel free to ask questions on our [forum](https://forum.helloid.com/forum/helloid-connectors/service-automation/179-helloid-sa-sharepoint-online-get-site-details)_
+
+## HelloID Docs
 The official HelloID documentation can be found at: https://docs.helloid.com/
