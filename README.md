@@ -88,12 +88,6 @@ The PowerShell script "createform.ps1" contains a complete PowerShell script usi
 
  _Please note that this script asumes none of the required resources do exists within HelloID. The script does not contain versioning or source control_
 
-
-### Getting started
-Please follow the documentation steps on [HelloID Docs](https://docs.helloid.com/hc/en-us/articles/360017556559-Service-automation-GitHub-resources) in order to setup and run the All-in one Powershell Script in your own environment.
-
-## prerequisites
-Please follow the documentation for installing the SharePoint powershell module on [Microsoft Docs](https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online?view=sharepoint-ps).
  
 ## Post-setup configuration
 After the all-in-one PowerShell script has run and created all the required resources. The following items need to be configured according to your own environment
