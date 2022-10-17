@@ -26,8 +26,24 @@
                                                                                     "field":  "DisplayName"
                                                                                 },
                                                                                 {
-                                                                                    "headerName":  "Url",
-                                                                                    "field":  "Url"
+                                                                                    "headerName":  "Description",
+                                                                                    "field":  "Description"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Mail Nick Name",
+                                                                                    "field":  "MailNickName"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Site",
+                                                                                    "field":  "Site"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Group Id",
+                                                                                    "field":  "GroupId"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Site Id",
+                                                                                    "field":  "SiteId"
                                                                                 }
                                                                             ],
                                                                 "height":  300,
@@ -46,8 +62,9 @@
                                                                                                              ]
                                                                                       }
                                                                         },
-                                                   "useDefault":  false,
-                                                   "useFilter":  true
+                                                   "useDefault":  true,
+                                                   "useFilter":  true,
+                                                   "defaultSelectorProperty":  "GroupId"
                                                },
                            "type":  "grid",
                            "summaryVisibility":  "Show",
@@ -68,12 +85,32 @@
                                                    "grid":  {
                                                                 "columns":  [
                                                                                 {
-                                                                                    "headerName":  "Name",
-                                                                                    "field":  "name"
+                                                                                    "headerName":  "Display Name",
+                                                                                    "field":  "DisplayName"
                                                                                 },
                                                                                 {
-                                                                                    "headerName":  "Value",
-                                                                                    "field":  "value"
+                                                                                    "headerName":  "Name",
+                                                                                    "field":  "Name"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Description",
+                                                                                    "field":  "Description"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Web Url",
+                                                                                    "field":  "WebUrl"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Created",
+                                                                                    "field":  "Created"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Last Modified",
+                                                                                    "field":  "LastModified"
+                                                                                },
+                                                                                {
+                                                                                    "headerName":  "Host Name",
+                                                                                    "field":  "HostName"
                                                                                 }
                                                                             ],
                                                                 "height":  300,

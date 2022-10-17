@@ -1,6 +1,5 @@
 # Set TLS to accept TLS, TLS 1.1 and TLS 1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12
-
 #HelloID variables
 #Note: when running this script inside HelloID; portalUrl and API credentials are provided automatically (generate and save API credentials first in your admin panel!)
 $portalUrl = "https://CUSTOMER.helloid.com"
@@ -16,35 +15,30 @@ $script:duplicateFormSuffix = "_tmp" #the suffix will be added to all HelloID re
 #NOTE: You can also update the HelloID Global variable values afterwards in the HelloID Admin Portal: https://<CUSTOMER>.helloid.com/admin/variablelibrary
 $globalHelloIDVariables = [System.Collections.Generic.List[object]]@();
 
-#Global variable #1 >> SharePointAdminPWD
+#Global variable #1 >> AADAppId
 $tmpName = @'
-SharePointAdminPWD
+AADAppId
 '@ 
 $tmpValue = "" 
-$globalHelloIDVariables.Add([PSCustomObject]@{name = $tmpName; value = $tmpValue; secret = "True"});
-
-#Global variable #2 >> SharePointAdminUser
-$tmpName = @'
-SharePointAdminUser
-'@ 
-$tmpValue = @'
-user@customer.onmicrosoft.com
-'@ 
 $globalHelloIDVariables.Add([PSCustomObject]@{name = $tmpName; value = $tmpValue; secret = "False"});
 
-#Global variable #3 >> SharePointBaseUrl
+#Global variable #2 >> AADAppSecret
 $tmpName = @'
-SharePointBaseUrl
+AADAppSecret
 '@ 
-$tmpValue = @'
-https://customer-admin.sharepoint.com
+$tmpValue = ""
+$globalHelloIDVariables.Add([PSCustomObject]@{name = $tmpName; value = $tmpValue; secret = "False"});
+
+#Global variable #3 >> AADtenantID
+$tmpName = @'
+AADtenantID
 '@ 
+$tmpValue = ""
 $globalHelloIDVariables.Add([PSCustomObject]@{name = $tmpName; value = $tmpValue; secret = "False"});
 
 
 #make sure write-information logging is visual
 $InformationPreference = "continue"
-
 # Check for prefilled API Authorization header
 if (-not [string]::IsNullOrEmpty($portalApiBasic)) {
     $script:headers = @{"authorization" = $portalApiBasic}
@@ -58,7 +52,6 @@ if (-not [string]::IsNullOrEmpty($portalApiBasic)) {
     $script:headers = @{"authorization" = $Key}
     Write-Information "Using manual API credentials"
 }
-
 # Check for prefilled PortalBaseURL
 if (-not [string]::IsNullOrEmpty($portalBaseUrl)) {
     $script:PortalBaseUrl = $portalBaseUrl
@@ -67,10 +60,8 @@ if (-not [string]::IsNullOrEmpty($portalBaseUrl)) {
     $script:PortalBaseUrl = $portalUrl
     Write-Information "Using manual PortalURL: $script:PortalBaseUrl"
 }
-
 # Define specific endpoint URI
 $script:PortalBaseUrl = $script:PortalBaseUrl.trim("/") + "/"  
-
 # Make sure to reveive an empty array using PowerShell Core
 function ConvertFrom-Json-WithEmptyArray([string]$jsonString) {
     # Running in PowerShell Core?
@@ -82,16 +73,13 @@ function ConvertFrom-Json-WithEmptyArray([string]$jsonString) {
         return ,$r  # Force return value to be an array using a comma
     }
 }
-
 function Invoke-HelloIDGlobalVariable {
     param(
         [parameter(Mandatory)][String]$Name,
         [parameter(Mandatory)][String][AllowEmptyString()]$Value,
         [parameter(Mandatory)][String]$Secret
     )
-
     $Name = $Name + $(if ($script:duplicateForm -eq $true) { $script:duplicateFormSuffix })
-
     try {
         $uri = ($script:PortalBaseUrl + "api/v1/automation/variables/named/$Name")
         $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $script:headers -ContentType "application/json" -Verbose:$false
@@ -109,7 +97,6 @@ function Invoke-HelloIDGlobalVariable {
             $uri = ($script:PortalBaseUrl + "api/v1/automation/variable")
             $response = Invoke-RestMethod -Method Post -Uri $uri -Headers $script:headers -ContentType "application/json" -Verbose:$false -Body $body
             $variableGuid = $response.automationVariableGuid
-
             Write-Information "Variable '$Name' created$(if ($script:debugLogging -eq $true) { ": " + $variableGuid })"
         } else {
             $variableGuid = $response.automationVariableGuid
@@ -119,7 +106,6 @@ function Invoke-HelloIDGlobalVariable {
         Write-Error "Variable '$Name', message: $_"
     }
 }
-
 function Invoke-HelloIDAutomationTask {
     param(
         [parameter(Mandatory)][String]$TaskName,
@@ -133,7 +119,6 @@ function Invoke-HelloIDAutomationTask {
     )
     
     $TaskName = $TaskName + $(if ($script:duplicateForm -eq $true) { $script:duplicateFormSuffix })
-
     try {
         $uri = ($script:PortalBaseUrl +"api/v1/automationtasks?search=$TaskName&container=$AutomationContainer")
         $responseRaw = (Invoke-RestMethod -Method Get -Uri $uri -Headers $script:headers -ContentType "application/json" -Verbose:$false) 
@@ -141,7 +126,6 @@ function Invoke-HelloIDAutomationTask {
     
         if([string]::IsNullOrEmpty($response.automationTaskGuid) -or $ForceCreateTask -eq $true) {
             #Create Task
-
             $body = @{
                 name                = $TaskName;
                 useTemplate         = $UseTemplate;
@@ -155,7 +139,6 @@ function Invoke-HelloIDAutomationTask {
             $uri = ($script:PortalBaseUrl +"api/v1/automationtasks/powershell")
             $response = Invoke-RestMethod -Method Post -Uri $uri -Headers $script:headers -ContentType "application/json" -Verbose:$false -Body $body
             $taskGuid = $response.automationTaskGuid
-
             Write-Information "Powershell task '$TaskName' created$(if ($script:debugLogging -eq $true) { ": " + $taskGuid })"
         } else {
             #Get TaskGUID
@@ -165,10 +148,8 @@ function Invoke-HelloIDAutomationTask {
     } catch {
         Write-Error "Powershell task '$TaskName', message: $_"
     }
-
     $returnObject.Value = $taskGuid
 }
-
 function Invoke-HelloIDDatasource {
     param(
         [parameter(Mandatory)][String]$DatasourceName,
@@ -180,9 +161,7 @@ function Invoke-HelloIDDatasource {
         [parameter()][String][AllowEmptyString()]$AutomationTaskGuid,
         [parameter(Mandatory)][Ref]$returnObject
     )
-
     $DatasourceName = $DatasourceName + $(if ($script:duplicateForm -eq $true) { $script:duplicateFormSuffix })
-
     $datasourceTypeName = switch($DatasourceType) { 
         "1" { "Native data source"; break} 
         "2" { "Static data source"; break} 
@@ -220,10 +199,8 @@ function Invoke-HelloIDDatasource {
     } catch {
       Write-Error "$datasourceTypeName '$DatasourceName', message: $_"
     }
-
     $returnObject.Value = $datasourceGuid
 }
-
 function Invoke-HelloIDDynamicForm {
     param(
         [parameter(Mandatory)][String]$FormName,
@@ -232,7 +209,6 @@ function Invoke-HelloIDDynamicForm {
     )
     
     $FormName = $FormName + $(if ($script:duplicateForm -eq $true) { $script:duplicateFormSuffix })
-
     try {
         try {
             $uri = ($script:PortalBaseUrl +"api/v1/forms/$FormName")
@@ -261,11 +237,8 @@ function Invoke-HelloIDDynamicForm {
     } catch {
         Write-Error "Dynamic form '$FormName', message: $_"
     }
-
     $returnObject.Value = $formGuid
 }
-
-
 function Invoke-HelloIDDelegatedForm {
     param(
         [parameter(Mandatory)][String]$DelegatedFormName,
@@ -278,7 +251,6 @@ function Invoke-HelloIDDelegatedForm {
     )
     $delegatedFormCreated = $false
     $DelegatedFormName = $DelegatedFormName + $(if ($script:duplicateForm -eq $true) { $script:duplicateFormSuffix })
-
     try {
         try {
             $uri = ($script:PortalBaseUrl +"api/v1/delegatedforms/$DelegatedFormName")
@@ -305,7 +277,6 @@ function Invoke-HelloIDDelegatedForm {
             $delegatedFormGuid = $response.delegatedFormGUID
             Write-Information "Delegated form '$DelegatedFormName' created$(if ($script:debugLogging -eq $true) { ": " + $delegatedFormGuid })"
             $delegatedFormCreated = $true
-
             $bodyCategories = $Categories
             $uri = ($script:PortalBaseUrl +"api/v1/delegatedforms/$delegatedFormGuid/categories")
             $response = Invoke-RestMethod -Method Post -Uri $uri -Headers $script:headers -ContentType "application/json" -Verbose:$false -Body $bodyCategories
@@ -318,11 +289,9 @@ function Invoke-HelloIDDelegatedForm {
     } catch {
         Write-Error "Delegated form '$DelegatedFormName', message: $_"
     }
-
     $returnObject.value.guid = $delegatedFormGuid
     $returnObject.value.created = $delegatedFormCreated
-}
-<# Begin: HelloID Global Variables #>
+}<# Begin: HelloID Global Variables #>
 foreach ($item in $globalHelloIDVariables) {
 	Invoke-HelloIDGlobalVariable -Name $item.name -Value $item.value -Secret $item.secret 
 }
@@ -332,58 +301,61 @@ foreach ($item in $globalHelloIDVariables) {
 <# Begin: HelloID Data sources #>
 <# Begin: DataSource "Sharepoint-get-site-details" #>
 $tmpPsScript = @'
-$siteId = $datasource.selectedSite.Url
-$connected = $false
+$groupId = $datasource.selectedSite.Groupid
+$siteUrl = $datasource.selectedSite.Site
+# Set TLS to accept TLS, TLS 1.1 and TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12
 
 try {
-	Import-Module Microsoft.Online.SharePoint.PowerShell -DisableNameChecking
-	$pwd = ConvertTo-SecureString -string $SharePointAdminPWD -AsPlainText -Force
-	$cred = New-Object System.Management.Automation.PSCredential $SharePointAdminUser, $pwd
-	$null = Connect-SPOService -Url $SharePointBaseUrl -Credential $cred
-    Write-Information "Connected to Microsoft SharePoint"
-    $connected = $true
-}
-catch
-{	
-    Write-Error "Could not connect to Microsoft SharePoint. Error: $($_.Exception.Message)"
-    Write-Warning "Failed to connect to Microsoft SharePoint"
-}
+    
+        Write-Information -Message "Generating Microsoft Graph API Access Token user.."
 
-if ($connected)
-{
-	try {
-        $sites = Get-SPOSite -Identity $siteId
+        $baseUri = "https://login.microsoftonline.com/"
+        $authUri = $baseUri + "$AADTenantID/oauth2/token"
+
+        $body = @{
+            grant_type      = "client_credentials"
+            client_id       = "$AADAppId"
+            client_secret   = "$AADAppSecret"
+            resource        = "https://graph.microsoft.com"
+        }
+ 
+        $Response = Invoke-RestMethod -Method POST -Uri $authUri -Body $body -ContentType 'application/x-www-form-urlencoded'
+        $accessToken = $Response.access_token;
+
+        #Add the authorization header to the request
+        $authorization = @{
+            Authorization = "Bearer $accesstoken";
+            'Content-Type' = "application/json";
+            Accept = "application/json";
+        }
+ 
+        $baseSearchUri = "https://graph.microsoft.com/"
+
+        $siteUri = $baseSearchUri + "v1.0/groups/" + $groupId + "/sites/root"
+        $siteResponse = Invoke-RestMethod -Uri $siteUri -Method Get -Headers $authorization -Verbose:$false          
         
-        if(@($sites).Count -eq 1){
-         foreach($tmp in $sites.psObject.properties)
-            {
-                $returnObject = [ordered]@{name=$tmp.Name; value=$tmp.value}
-                Write-Output $returnObject
-            }
-        }else{
+        
+        $resultCount = @($siteResponse).Count
+        Write-Information -Message "Result count: $resultCount"
+         
+        if($resultCount -gt 0){         
+            $returnObject = @{DisplayName=$siteResponse.DisplayName; Description=$siteResponse.Description; Created=$siteResponse.createdDateTime; LastModified=$siteResponse.lastModifiedDateTime; Name=$siteResponse.name; WebUrl=$siteResponse.webUrl; HostName=$siteResponse.SiteCollection.hostname}
+            Write-Output $returnObject        
+        } else {
             return
         }
-	}
-	catch
-	{
-		Write-Error "Error getting Site Details. Error: $($_.Exception.Message)"
-		Write-Warning -Message "Error getting Site Details"
-		return
-	}
-    finally
-    {
-        Disconnect-SPOService
-        Remove-Module -Name Microsoft.Online.SharePoint.PowerShell
-    }
+    
+} catch {
+    
+    Write-Error -Message ("Error searching for SharePoint site . Error: $($_.Exception.Message)" + $errorDetailsMessage)
+    Write-Warning -Message "Error searching for SharePoint site"
+     
+    return
 }
-else
-{
-	return
-}
-
 '@ 
 $tmpModel = @'
-[{"key":"value","type":0},{"key":"name","type":0}]
+[{"key":"Created","type":0},{"key":"WebUrl","type":0},{"key":"Name","type":0},{"key":"Description","type":0},{"key":"DisplayName","type":0},{"key":"LastModified","type":0},{"key":"HostName","type":0}]
 '@ 
 $tmpInput = @'
 [{"description":null,"translateDescription":false,"inputFieldType":1,"key":"selectedSite","type":0,"options":1}]
@@ -397,56 +369,77 @@ Invoke-HelloIDDatasource -DatasourceName $dataSourceGuid_1_Name -DatasourceType 
 
 <# Begin: DataSource "Sharepoint-generate-table-sites-wildcard" #>
 $tmpPsScript = @'
-$connected = $false
-$searchValue = $datasource.searchValue
+# Set TLS to accept TLS, TLS 1.1 and TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12
+
 try {
-	Import-Module Microsoft.Online.SharePoint.PowerShell -DisableNameChecking
-	$pwd = ConvertTo-SecureString -string $SharePointAdminPWD -AsPlainText -Force
-	$cred = New-Object System.Management.Automation.PSCredential $SharePointAdminUser, $pwd
-	$null = Connect-SPOService -Url $SharePointBaseUrl -Credential $cred
-    Write-Information "Connected to Microsoft SharePoint"
-    $connected = $true
-}
-catch
-{	
-    Write-Error "Could not connect to Microsoft SharePoint. Error: $($_.Exception.Message)"
-    Write-Warning "Failed to connect to Microsoft SharePoint"
-}
+    $searchValue = $datasource.searchValue
+    $searchQuery = "*$searchValue*"
+      
+      
+    if([String]::IsNullOrEmpty($searchValue) -eq $true){
+        return
+    }else{
+        Write-Information -Message "Generating Microsoft Graph API Access Token user.."
 
-if ($connected)
-{    
-	try {
-        #Write-Output $searchValue
-	    $sites = Get-SPOSite -Filter "url -like 'sites/$($searchValue)'" -Limit ALL
+        $baseUri = "https://login.microsoftonline.com/"
+        $authUri = $baseUri + "$AADTenantID/oauth2/token"
 
-       ForEach($Site in $sites)
-        {
-            #Write-Output $Site 
-            $returnObject = @{DisplayName=$Site.Title; Url=$Site.Url;}
-            Write-Output $returnObject                
+        $body = @{
+            grant_type      = "client_credentials"
+            client_id       = "$AADAppId"
+            client_secret   = "$AADAppSecret"
+            resource        = "https://graph.microsoft.com"
         }
-        
-	}
-	catch
-	{
-		Write-Error "Error getting SharePoint sitecollections. Error: $($_.Exception.Message)"
-		Write-Warning "Error getting SharePoint sitecollections"
-		return
-	}
-    finally
-    {        
-        Disconnect-SPOService
-        Remove-Module -Name Microsoft.Online.SharePoint.PowerShell
-    }
-}
-else
-{
-	return
-}
+ 
+        $Response = Invoke-RestMethod -Method POST -Uri $authUri -Body $body -ContentType 'application/x-www-form-urlencoded'
+        $accessToken = $Response.access_token;
 
+        Write-Information -Message "Searching for: $searchQuery"
+        #Add the authorization header to the request
+        $authorization = @{
+            Authorization = "Bearer $accesstoken";
+            'Content-Type' = "application/json";
+            Accept = "application/json";
+        }
+ 
+        $baseSearchUri = "https://graph.microsoft.com/"
+        $searchUri = $baseSearchUri + "v1.0/groups"
+        $groupsResponse = Invoke-RestMethod -Uri $searchUri -Method Get -Headers $authorization -Verbose:$false          
+
+        #Write-Information ($teamsResponse.value | ConvertTo-Json)
+        $groups = foreach($groupObject in $groupsResponse.value){
+            
+            if( $groupObject.displayName -like $searchQuery -or $groupObject.MailNickName -like $searchQuery -or $groupObject.Mailaddress -like $searchQuery ){
+                $groupObject
+            }
+        }
+
+        $resultCount = @($groups).Count
+        Write-Information -Message "Result count: $resultCount"
+         
+        if($resultCount -gt 0){
+            foreach($group in $groups){
+                $siteUri = $searchUri + "/" + $($group.Id)+ "/sites/root"
+                $site = Invoke-RestMethod -Uri $siteUri -Method Get -Headers $authorization -Verbose:$false
+                #Write-Information $site.WebUrl
+                $returnObject = @{DisplayName=$group.DisplayName; Description=$group.Description; MailNickName=$group.MailNickName; GroupId=$group.Id; Site=$site.WebUrl; SiteId=$site.id}
+                Write-Output $returnObject
+            }
+        } else {
+            return
+        }
+    }
+} catch {
+    
+    Write-Error -Message ("Error searching for Teams-enabled AzureAD groups. Error: $($_.Exception.Message)" + $errorDetailsMessage)
+    Write-Warning -Message "Error searching for Teams-enabled AzureAD groups"
+     
+    return
+}
 '@ 
 $tmpModel = @'
-[{"key":"DisplayName","type":0},{"key":"Url","type":0}]
+[{"key":"GroupId","type":0},{"key":"MailNickName","type":0},{"key":"SiteId","type":0},{"key":"Description","type":0},{"key":"DisplayName","type":0},{"key":"Site","type":0}]
 '@ 
 $tmpInput = @'
 [{"description":null,"translateDescription":false,"inputFieldType":1,"key":"searchValue","type":0,"options":1}]
@@ -461,7 +454,7 @@ Invoke-HelloIDDatasource -DatasourceName $dataSourceGuid_0_Name -DatasourceType 
 
 <# Begin: Dynamic Form "SharePoint - Get Site details" #>
 $tmpSchema = @"
-[{"label":"Select Site","fields":[{"key":"searchValue","templateOptions":{"label":"Search for SiteName","required":true},"type":"input","summaryVisibility":"Show","requiresTemplateOptions":true,"requiresKey":true,"requiresDataSource":false},{"key":"sites","templateOptions":{"label":"Select Site","required":true,"grid":{"columns":[{"headerName":"Display Name","field":"DisplayName"},{"headerName":"Url","field":"Url"}],"height":300,"rowSelection":"single"},"dataSourceConfig":{"dataSourceGuid":"$dataSourceGuid_0","input":{"propertyInputs":[{"propertyName":"searchValue","otherFieldValue":{"otherFieldKey":"searchValue"}}]}},"useDefault":false,"useFilter":true},"type":"grid","summaryVisibility":"Show","requiresTemplateOptions":true,"requiresKey":true,"requiresDataSource":true}]},{"label":"Site details","fields":[{"key":"details","templateOptions":{"label":"Details","required":false,"grid":{"columns":[{"headerName":"Name","field":"name"},{"headerName":"Value","field":"value"}],"height":300,"rowSelection":"single"},"dataSourceConfig":{"dataSourceGuid":"$dataSourceGuid_1","input":{"propertyInputs":[{"propertyName":"selectedSite","otherFieldValue":{"otherFieldKey":"sites"}}]}},"useDefault":false},"type":"grid","summaryVisibility":"Show","requiresTemplateOptions":true,"requiresKey":true,"requiresDataSource":true}]}]
+[{"label":"Select Site","fields":[{"key":"searchValue","templateOptions":{"label":"Search for SiteName","required":true},"type":"input","summaryVisibility":"Show","requiresTemplateOptions":true,"requiresKey":true,"requiresDataSource":false},{"key":"sites","templateOptions":{"label":"Select Site","required":true,"grid":{"columns":[{"headerName":"Display Name","field":"DisplayName"},{"headerName":"Description","field":"Description"},{"headerName":"Mail Nick Name","field":"MailNickName"},{"headerName":"Site","field":"Site"},{"headerName":"Group Id","field":"GroupId"},{"headerName":"Site Id","field":"SiteId"}],"height":300,"rowSelection":"single"},"dataSourceConfig":{"dataSourceGuid":"$dataSourceGuid_0","input":{"propertyInputs":[{"propertyName":"searchValue","otherFieldValue":{"otherFieldKey":"searchValue"}}]}},"useDefault":true,"useFilter":true,"defaultSelectorProperty":"GroupId"},"type":"grid","summaryVisibility":"Show","requiresTemplateOptions":true,"requiresKey":true,"requiresDataSource":true}]},{"label":"Site details","fields":[{"key":"details","templateOptions":{"label":"Details","required":false,"grid":{"columns":[{"headerName":"Display Name","field":"DisplayName"},{"headerName":"Name","field":"Name"},{"headerName":"Description","field":"Description"},{"headerName":"Web Url","field":"WebUrl"},{"headerName":"Created","field":"Created"},{"headerName":"Last Modified","field":"LastModified"},{"headerName":"Host Name","field":"HostName"}],"height":300,"rowSelection":"single"},"dataSourceConfig":{"dataSourceGuid":"$dataSourceGuid_1","input":{"propertyInputs":[{"propertyName":"selectedSite","otherFieldValue":{"otherFieldKey":"sites"}}]}},"useDefault":false},"type":"grid","summaryVisibility":"Show","requiresTemplateOptions":true,"requiresKey":true,"requiresDataSource":true}]}]
 "@ 
 
 $dynamicFormGuid = [PSCustomObject]@{} 
@@ -486,7 +479,6 @@ foreach($group in $delegatedFormAccessGroupNames) {
     }
 }
 $delegatedFormAccessGroupGuids = ($delegatedFormAccessGroupGuids | Select-Object -Unique | ConvertTo-Json -Compress)
-
 $delegatedFormCategoryGuids = @()
 foreach($category in $delegatedFormCategories) {
     try {
@@ -502,12 +494,10 @@ foreach($category in $delegatedFormCategories) {
             name = @{"en" = $category};
         }
         $body = ConvertTo-Json -InputObject $body
-
         $uri = ($script:PortalBaseUrl +"api/v1/delegatedformcategories")
         $response = Invoke-RestMethod -Method Post -Uri $uri -Headers $script:headers -ContentType "application/json" -Verbose:$false -Body $body
         $tmpGuid = $response.delegatedFormCategoryGuid
         $delegatedFormCategoryGuids += $tmpGuid
-
         Write-Information "HelloID Delegated Form category '$category' successfully created$(if ($script:debugLogging -eq $true) { ": " + $tmpGuid })"
     }
 }
