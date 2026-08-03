@@ -1,4 +1,4 @@
-# HelloID-Conn-SA-Full-SharePoint-Online-GetDetails
+# HelloID-Conn-SA-Full-SharePoint-Online-GetSiteDetails
 
 | :information_source: Information                                                                                                                                                                                                                                                                                                                                                          |
 | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -6,7 +6,7 @@
 
 ## Description
 
-_HelloID-Conn-SA-Full-SharePoint-Online-GetDetails_ is a template designed for use with HelloID Service Automation (SA) Delegated Forms. It can be imported into HelloID and customized according to your requirements.
+_HelloID-Conn-SA-Full-SharePoint-Online-GetSiteDetails_ is a template designed for use with HelloID Service Automation (SA) Delegated Forms. It can be imported into HelloID and customized according to your requirements.
 
 This HelloID Service Automation Delegated Form provides SharePoint Online functionality. The following options are available:
 
@@ -65,10 +65,10 @@ The following global variables must be configured in HelloID when importing and 
 
 The following Microsoft Graph API endpoints are used by the connector:
 
-| Endpoint                   | Description         |
-| -------------------------- | ------------------- |
-| /v1.0/groups               | List groups         |
-| /_SharePointBaseUrl_/\_api | SharePoint REST API |
+| Endpoint                                          | Description                     |
+| ------------------------------------------------- | ------------------------------- |
+| /_api/search/query                                | Search SharePoint sites         |
+| /oauth2/v2.0/token                                | Request access token (Entra ID) |
 
 ### API documentation
 

@@ -377,7 +377,12 @@ $siteUrl = $datasource.selectedSite.SPWebUrl
 # Set TLS to accept TLS, TLS 1.1 and TLS 1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls -bor [Net.SecurityProtocolType]::Tls11 -bor [Net.SecurityProtocolType]::Tls12
 
-try{
+# Set debug logging
+$VerbosePreference = "SilentlyContinue"
+$InformationPreference = "Continue"
+$WarningPreference = "Continue"
+
+try {
     $actionMessage = "show properties"
     $properties = $datasource.selectedSite.psObject.properties | Sort-Object Name
 
@@ -634,7 +639,7 @@ try {
 
         # Create access token
         $actionMessage = "creating access token"
-        $entraToken = Get-MSEntraAccessToken -Certificate $certificate -AppId $EntraIdAppId -TenantId $EntraIdTenantId -Resource "https://jbt4e.sharepoint.com" 
+        $entraToken = Get-MSEntraAccessToken -Certificate $certificate -AppId $EntraIdAppId -TenantId $EntraIdTenantId -Resource $SharePointBaseUrl
         Write-Verbose "Created access token"
 
         # Create headers
