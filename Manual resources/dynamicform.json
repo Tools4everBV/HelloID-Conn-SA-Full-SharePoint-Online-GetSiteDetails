@@ -5,8 +5,9 @@
                        {
                            "key":  "searchValue",
                            "templateOptions":  {
-                                                   "label":  "Search for SiteName",
-                                                   "required":  true
+                                                   "label":  "Search (wildcard search)",
+                                                   "required":  true,
+                                                   "placeholder":  "use * to search all sites"
                                                },
                            "type":  "input",
                            "summaryVisibility":  "Show",
@@ -22,24 +23,20 @@
                                                    "grid":  {
                                                                 "columns":  [
                                                                                 {
-                                                                                    "headerName":  "Display Name",
-                                                                                    "field":  "DisplayName"
+                                                                                    "headerName":  "Title",
+                                                                                    "field":  "Title"
                                                                                 },
                                                                                 {
                                                                                     "headerName":  "Description",
                                                                                     "field":  "Description"
                                                                                 },
                                                                                 {
-                                                                                    "headerName":  "Mail Nick Name",
-                                                                                    "field":  "MailNickName"
+                                                                                    "headerName":  "SP Web Url",
+                                                                                    "field":  "SPWebUrl"
                                                                                 },
                                                                                 {
-                                                                                    "headerName":  "Site",
-                                                                                    "field":  "Site"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "Group Id",
-                                                                                    "field":  "GroupId"
+                                                                                    "headerName":  "Web Template",
+                                                                                    "field":  "WebTemplate"
                                                                                 },
                                                                                 {
                                                                                     "headerName":  "Site Id",
@@ -64,7 +61,8 @@
                                                                         },
                                                    "useDefault":  true,
                                                    "useFilter":  true,
-                                                   "defaultSelectorProperty":  "GroupId"
+                                                   "defaultSelectorProperty":  "SiteId",
+                                                   "allowCsvDownload":  true
                                                },
                            "type":  "grid",
                            "summaryVisibility":  "Show",
@@ -85,32 +83,12 @@
                                                    "grid":  {
                                                                 "columns":  [
                                                                                 {
-                                                                                    "headerName":  "Display Name",
-                                                                                    "field":  "DisplayName"
-                                                                                },
-                                                                                {
                                                                                     "headerName":  "Name",
-                                                                                    "field":  "Name"
+                                                                                    "field":  "name"
                                                                                 },
                                                                                 {
-                                                                                    "headerName":  "Description",
-                                                                                    "field":  "Description"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "Web Url",
-                                                                                    "field":  "WebUrl"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "Created",
-                                                                                    "field":  "Created"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "Last Modified",
-                                                                                    "field":  "LastModified"
-                                                                                },
-                                                                                {
-                                                                                    "headerName":  "Host Name",
-                                                                                    "field":  "HostName"
+                                                                                    "headerName":  "Value",
+                                                                                    "field":  "value"
                                                                                 }
                                                                             ],
                                                                 "height":  300,
@@ -129,7 +107,8 @@
                                                                                                              ]
                                                                                       }
                                                                         },
-                                                   "useDefault":  false
+                                                   "useDefault":  false,
+                                                   "allowCsvDownload":  true
                                                },
                            "type":  "grid",
                            "summaryVisibility":  "Show",

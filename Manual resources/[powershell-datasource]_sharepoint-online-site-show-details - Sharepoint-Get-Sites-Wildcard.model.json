@@ -1,0 +1,222 @@
+[
+    {
+        "key":  "ContentTypeId",
+        "type":  0
+    },
+    {
+        "key":  "docaclmeta",
+        "type":  0
+    },
+    {
+        "key":  "Size",
+        "type":  0
+    },
+    {
+        "key":  "piSearchResultId",
+        "type":  0
+    },
+    {
+        "key":  "WorkId",
+        "type":  0
+    },
+    {
+        "key":  "Description",
+        "type":  0
+    },
+    {
+        "key":  "ListId",
+        "type":  0
+    },
+    {
+        "key":  "ServerRedirectedPreviewURL",
+        "type":  0
+    },
+    {
+        "key":  "IdentityListId",
+        "type":  0
+    },
+    {
+        "key":  "OriginalPath",
+        "type":  0
+    },
+    {
+        "key":  "ServerRedirectedEmbedURL",
+        "type":  0
+    },
+    {
+        "key":  "IsDocument",
+        "type":  0
+    },
+    {
+        "key":  "Write",
+        "type":  0
+    },
+    {
+        "key":  "GeoLocationSource",
+        "type":  0
+    },
+    {
+        "key":  "WebId",
+        "type":  0
+    },
+    {
+        "key":  "IdentitySiteCollectionId",
+        "type":  0
+    },
+    {
+        "key":  "ViewsRecent",
+        "type":  0
+    },
+    {
+        "key":  "FileType",
+        "type":  0
+    },
+    {
+        "key":  "IdentityListItemId",
+        "type":  0
+    },
+    {
+        "key":  "SectionIndexes",
+        "type":  0
+    },
+    {
+        "key":  "importance",
+        "type":  0
+    },
+    {
+        "key":  "Title",
+        "type":  0
+    },
+    {
+        "key":  "RenderTemplateId",
+        "type":  0
+    },
+    {
+        "key":  "contentclass",
+        "type":  0
+    },
+    {
+        "key":  "ServerRedirectedURL",
+        "type":  0
+    },
+    {
+        "key":  "DocumentSignature",
+        "type":  0
+    },
+    {
+        "key":  "IdentityWebId",
+        "type":  0
+    },
+    {
+        "key":  "ResultTypeIdList",
+        "type":  0
+    },
+    {
+        "key":  "deeplinks",
+        "type":  0
+    },
+    {
+        "key":  "LastModifiedTime",
+        "type":  0
+    },
+    {
+        "key":  "ParentLink",
+        "type":  0
+    },
+    {
+        "key":  "DocId",
+        "type":  0
+    },
+    {
+        "key":  "SiteId",
+        "type":  0
+    },
+    {
+        "key":  "FileExtension",
+        "type":  0
+    },
+    {
+        "key":  "SiteDescription",
+        "type":  0
+    },
+    {
+        "key":  "PictureThumbnailURL",
+        "type":  0
+    },
+    {
+        "key":  "ProgId",
+        "type":  0
+    },
+    {
+        "key":  "HitHighlightedProperties",
+        "type":  0
+    },
+    {
+        "key":  "SectionNames",
+        "type":  0
+    },
+    {
+        "key":  "ResultTypeId",
+        "type":  0
+    },
+    {
+        "key":  "IsContainer",
+        "type":  0
+    },
+    {
+        "key":  "WebTemplate",
+        "type":  0
+    },
+    {
+        "key":  "Author",
+        "type":  0
+    },
+    {
+        "key":  "HitHighlightedSummary",
+        "type":  0
+    },
+    {
+        "key":  "Rank",
+        "type":  0
+    },
+    {
+        "key":  "Path",
+        "type":  0
+    },
+    {
+        "key":  "ViewsLifeTime",
+        "type":  0
+    },
+    {
+        "key":  "LinkingUrl",
+        "type":  0
+    },
+    {
+        "key":  "CollapsingStatus",
+        "type":  0
+    },
+    {
+        "key":  "SiteName",
+        "type":  0
+    },
+    {
+        "key":  "SPWebUrl",
+        "type":  0
+    },
+    {
+        "key":  "SiteLogo",
+        "type":  0
+    },
+    {
+        "key":  "SecondaryFileExtension",
+        "type":  0
+    },
+    {
+        "key":  "IsExternalContent",
+        "type":  0
+    },
+    {
+        "key":  "UniqueId",
+        "type":  0
+    }
+]
